@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NZWalks.API.Models.DTO;
 using NZWalks.API.Repositories;
@@ -24,6 +25,7 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetAllWalksAsync()
         {
             // Fetch data from database - domain walks
@@ -39,6 +41,7 @@ namespace NZWalks.API.Controllers
         [HttpGet]
         [Route("{id:guid}")]
         [ActionName("GetWalkAsync")]
+        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetWalkAsync(Guid id)
         {
             // Get Walk Domain object from database
@@ -57,6 +60,7 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> AddWalkAsync([FromBody] Models.DTO.AddWalkRequest addWalkRequest)
         {
             // Validate addWalkRequest Object
@@ -86,6 +90,7 @@ namespace NZWalks.API.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> UpdateWalkAsync([FromRoute] Guid id, 
             [FromBody] UpdateWalkRequest updateWalkRequest)
         {
@@ -122,6 +127,7 @@ namespace NZWalks.API.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> DeleteWalkAsync([FromRoute] Guid id)
         {
             var existingWalk = await walkRepository.DeleteAsync(id);
@@ -138,26 +144,26 @@ namespace NZWalks.API.Controllers
 
         #region Private methods
 
-        private async Task<bool> ValidateAddWalkAsync(Models.DTO.AddWalkRequest addWalkRequest)
+        private async Task<bool> ValidateAddWalkAsync(AddWalkRequest addWalkRequest)
         {
-            if (addWalkRequest == null)
+            /*if (addWalkRequest == null)
             {
                 ModelState.AddModelError(nameof(addWalkRequest), 
                     $"{nameof(addWalkRequest)} cannot be empty.");
                 return false;
-            }
+            }*/
 
-            if (string.IsNullOrWhiteSpace(addWalkRequest.Name))
+            /*if (string.IsNullOrWhiteSpace(addWalkRequest.Name))
             {
                 ModelState.AddModelError(nameof(addWalkRequest.Name), 
                     $"{nameof(addWalkRequest.Name)} is required.");
-            }
+            }*/
 
-            if (addWalkRequest.Length <= 0)
+            /*if (addWalkRequest.Length <= 0)
             {
                 ModelState.AddModelError(nameof(addWalkRequest.Length), 
                     $"{nameof(addWalkRequest.Length)} should be greater than zero.");
-            }
+            }*/
 
             var region = await regionRepository.GetAsync(addWalkRequest.RegionId);
             if (region == null)
@@ -183,24 +189,24 @@ namespace NZWalks.API.Controllers
 
         private async Task<bool> ValidateUpdateWalkAsync(UpdateWalkRequest updateWalkRequest)
         {
-            if (updateWalkRequest == null)
+            /*if (updateWalkRequest == null)
             {
                 ModelState.AddModelError(nameof(updateWalkRequest),
                     $"{nameof(updateWalkRequest)} cannot be empty.");
                 return false;
-            }
+            }*/
 
-            if (string.IsNullOrWhiteSpace(updateWalkRequest.Name))
+            /*if (string.IsNullOrWhiteSpace(updateWalkRequest.Name))
             {
                 ModelState.AddModelError(nameof(updateWalkRequest.Name),
                     $"{nameof(updateWalkRequest.Name)} is required.");
-            }
+            }*/
 
-            if (updateWalkRequest.Length <= 0)
+            /*if (updateWalkRequest.Length <= 0)
             {
                 ModelState.AddModelError(nameof(updateWalkRequest.Length),
                     $"{nameof(updateWalkRequest.Length)} should be greater than zero.");
-            }
+            }*/
 
             var region = await regionRepository.GetAsync(updateWalkRequest.RegionId);
             if (region == null)
